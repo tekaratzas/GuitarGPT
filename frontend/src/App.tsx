@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import { backendService } from './services/backend'
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
@@ -28,13 +29,11 @@ function App() {
       formData.append('video', selectedFile)
       formData.append('practiceTime', practiceTime.toString())
 
-      const response = await fetch('http://localhost:3000/analyze-guitar-playing', {
-        method: 'POST',
-        body: formData,
-      })
+      const response = await backendService.analyzeGuitarPlaying(selectedFile, practiceTime)
 
-      const result = await response.json()
-      setUploadResult(`Success! File size: ${result.size} bytes, Practice time: ${result.practiceTime} minutes`)
+      console.log(response)
+
+      setUploadResult(`Success!`)
     } catch (error) {
       setUploadResult(`Error: ${error instanceof Error ? error.message : 'Upload failed'}`)
     } finally {
