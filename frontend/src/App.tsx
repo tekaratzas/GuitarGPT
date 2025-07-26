@@ -67,7 +67,7 @@ function App() {
         </div>
         
         <div className="relative z-10">
-          <Analysis analysis={analysis} />
+          <Analysis analysis={analysis} video={selectedFile!} />
           <div className="flex justify-center mt-12 mb-8">
             <button 
               onClick={handleNewAnalysis} 
@@ -103,7 +103,7 @@ function App() {
             </h1>
           </div>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
-            Upload your guitar practice video and unlock the secrets of your playing with AI-powered analysis
+            Stuck on a Riff or Lick? Let AI analyze your playing and give you personalized feedback.
           </p>
         </div>
 
@@ -144,6 +144,13 @@ function App() {
                         <div className="text-white font-medium">{selectedFile.name}</div>
                         <div className="text-gray-300 text-sm">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</div>
                       </div>
+                      <div className="flex-grow"></div>
+                      <button 
+                        onClick={() => setSelectedFile(null)}
+                        className="text-gray-400 hover:text-white transition-colors"
+                      >
+                        <span className="text-2xl">❌</span>
+                      </button>
                     </div>
                   </div>
                 )}

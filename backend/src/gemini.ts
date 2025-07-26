@@ -48,19 +48,26 @@ async function createGeminiConfig(userPrompt: string, videoBase64: string): Prom
         responseMimeType: 'application/json',
         responseSchema: {
             type: Type.OBJECT,
-            required: ["overall_feedback", "strong_points", "areas_to_improve", "practice_routine", "recommended_songs"],
+            required: [
+                "overall_feedback",
+                "strong_points",
+                "areas_to_improve",
+                "practice_routine",
+                "recommended_songs",
+                "highlight_segments"
+            ],
             properties: {
                 overall_feedback: {
                     type: Type.STRING,
-                    description: "A summary of the user's guitar playing, highlighting general strengths and weaknesses.",
+                    description: "A summary of the user's guitar playing, highlighting general strengths and weaknesses."
                 },
                 strong_points: {
                     type: Type.STRING,
-                    description: "Specific strong aspects of the user's guitar playing.",
+                    description: "Specific strong aspects of the user's guitar playing."
                 },
                 areas_to_improve: {
                     type: Type.STRING,
-                    description: "Specific areas where the user should focus on improving.",
+                    description: "Specific areas where the user should focus on improving."
                 },
                 practice_routine: {
                     type: Type.ARRAY,
@@ -71,28 +78,55 @@ async function createGeminiConfig(userPrompt: string, videoBase64: string): Prom
                         properties: {
                             title: {
                                 type: Type.STRING,
-                                description: "A short name for the practice exercise.",
+                                description: "A short name for the practice exercise."
                             },
                             description: {
                                 type: Type.STRING,
-                                description: "Detailed guidance on how to perform the exercise.",
+                                description: "Detailed guidance on how to perform the exercise."
                             },
                             time_minutes: {
                                 type: Type.NUMBER,
-                                description: "Recommended duration in minutes for this exercise.",
-                            },
-                        },
-                    },
+                                description: "Recommended duration in minutes for this exercise."
+                            }
+                        }
+                    }
                 },
                 recommended_songs: {
                     type: Type.ARRAY,
                     description: "Songs that align with the user's current skill level and areas of improvement.",
                     items: {
-                        type: Type.STRING,
-                    },
+                        type: Type.STRING
+                    }
                 },
-            },
-        },
+                highlight_segments: {
+                    type: Type.ARRAY,
+                    description: "Time-stamped segments highlighting strengths or weaknesses in the user's playing.",
+                    items: {
+                        type: Type.OBJECT,
+                        required: ["start", "end", "type", "description"],
+                        properties: {
+                            start: {
+                                type: Type.NUMBER,
+                                description: "Start time of the segment in seconds."
+                            },
+                            end: {
+                                type: Type.NUMBER,
+                                description: "End time of the segment in seconds."
+                            },
+                            type: {
+                                type: Type.STRING,
+                                enum: ["mistake", "highlight", "timing_issue", "string_noise", "clean_passage", "other"],
+                                description: "The type of segment."
+                            },
+                            description: {
+                                type: Type.STRING,
+                                description: "Detailed explanation of what happened during this segment."
+                            }
+                        }
+                    }
+                }
+            }
+        }
     };
     const model = 'gemini-2.5-flash';
     const contents = [
@@ -128,5 +162,10 @@ async function executeGeminiConfig(config: GeminiConfig): Promise<GuitarAnalysis
         responseText += chunk.text;
     }
 
-    return JSON.parse(responseText) as GuitarAnalysisResponse;
+    try {
+        return JSON.parse(responseText) as GuitarAnalysisResponse;
+    } catch (e) {
+        console.error(e);
+        throw new Error('Failed to parse response from Gemini');
+    }
 }
