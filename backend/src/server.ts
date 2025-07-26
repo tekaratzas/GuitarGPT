@@ -20,21 +20,27 @@ app.use(cookieParser());
 
 // Type for request with optional file from multer
 interface MulterRequest extends Request {
-    file?: any; // fallback to any for compatibility
+    file?: Express.Multer.File // fallback to any for compatibility
 }
 
 app.post('/analyze-guitar-playing', upload.single('video'), async (req: MulterRequest, res: Response) => {
-    const { practiceTime } = req.body;
-    const videoFile = req.file; // videoFile.buffer contains the file data in memory
+    const practiceTimeRaw = req.body.practiceTime;
+    const practiceTime = Number(practiceTimeRaw);
+    if (!practiceTimeRaw || isNaN(practiceTime) || practiceTime < 5 || practiceTime > 480) {
+        return res.status(400).json({ error: 'Invalid practiceTime. Must be a number between 5 and 480.' });
+    }
+
+    if (!req.file) {
+        return res.status(400).json({ error: 'No video file uploaded.' });
+    }
+
+    const videoFile: Express.Multer.File = req.file;
+
+    console.log("Received video with size", videoFile?.size, "and practiceTime", practiceTime);
 
     // TODO: Replace with your actual analysis logic
     // const analysis = await analyzeGuitarPlaying(videoFile?.buffer);
     const analysis = { message: 'Received in memory!', size: videoFile?.size, practiceTime };
-
-    // Explicitly clear the buffer if needed (optional)
-    if (videoFile?.buffer) {
-        videoFile.buffer = null;
-    }
 
     res.json(analysis);
 });
