@@ -25,22 +25,29 @@ const OverlayCanvas = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(({ highli
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
+        // Convert currentTime from milliseconds to seconds
+        const currentTimeInSeconds = currentTime;
+
         // Clear the canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         // Find the current highlight segment using the ref
         const currentSegment = segmentsRef.current.find(
-            segment => currentTime >= segment.start && currentTime <= segment.end
+            segment => {
+                const startSeconds = segment.start * 100;
+                const endSeconds = segment.end * 100;
+                return currentTimeInSeconds >= startSeconds && currentTimeInSeconds <= endSeconds;
+            }
         );
 
         // Add a semi-transparent background for better visibility
         ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
         ctx.fillRect(10, 10, 400, 80);
 
-        // Draw the current time
+        // Draw the current time (show in both minutes and seconds)
         ctx.fillStyle = 'white';
         ctx.font = 'bold 16px Arial';
-        ctx.fillText(`Time: ${currentTime.toFixed(2)}s`, 20, 30);
+        ctx.fillText(`Time: ${currentTime.toFixed(3)}s`, 20, 30);
 
         // Draw segment information if we're in a highlight segment
         if (currentSegment) {
@@ -51,7 +58,9 @@ const OverlayCanvas = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(({ highli
             // Draw segment timing
             ctx.fillStyle = 'yellow';
             ctx.font = '14px Arial';
-            ctx.fillText(`${currentSegment.start}s - ${currentSegment.end}s`, 20, 75);
+            const startSeconds = currentSegment.start * 100;
+            const endSeconds = currentSegment.end * 100;
+            ctx.fillText(`${startSeconds.toFixed(1)}s - ${endSeconds.toFixed(1)}s`, 20, 75);
         } else {
             // No current segment
             ctx.fillStyle = 'lightgray';

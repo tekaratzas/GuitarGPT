@@ -24,7 +24,6 @@ function VideoPlayer({ video, highlightSegments }: VideoPlayerProps) {
                 onTimeUpdate={(progress) => {
                     // @ts-ignore
                     const currentTime = progress.target.currentTime;
-                    console.log(currentTime);
                     currentTimeRef.current = currentTime; // these are in Seconds!!
                     
                     // Update the overlay directly
