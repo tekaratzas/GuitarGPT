@@ -1,0 +1,128 @@
+import {
+    GoogleGenAI,
+    Type,
+} from '@google/genai';
+
+
+const systemPrompt = `
+You are an expert guitar teacher and expert on getting players better.
+
+You will be given a short video of a guitar player playing. As well as how much time they have to practice per day.
+
+Your job is to analyze the video and provide a detailed analysis of the player's playing.
+
+You will encourage them by accentuating their strengths, then give them specific areas to improve on.
+
+You will also provide recommended songs to learn to help them improve.
+`;
+
+type GeminiConfig = {
+    model: string;
+    config: any;
+    contents: any;
+};
+
+async function createGeminiConfig(content: any): Promise<GeminiConfig> {
+    const config = {
+        thinkingConfig: {
+            thinkingBudget: -1,
+        },
+        responseMimeType: 'application/json',
+        responseSchema: {
+            type: Type.OBJECT,
+            required: ["overall_feedback", "strong_points", "areas_to_improve", "practice_routine", "recommended_songs"],
+            properties: {
+                overall_feedback: {
+                    type: Type.STRING,
+                    description: "A summary of the user's guitar playing, highlighting general strengths and weaknesses.",
+                },
+                strong_points: {
+                    type: Type.STRING,
+                    description: "Specific strong aspects of the user's guitar playing.",
+                },
+                areas_to_improve: {
+                    type: Type.STRING,
+                    description: "Specific areas where the user should focus on improving.",
+                },
+                practice_routine: {
+                    type: Type.ARRAY,
+                    description: "A list of targeted practice exercises to help the user improve.",
+                    items: {
+                        type: Type.OBJECT,
+                        required: ["title", "description", "time_minutes"],
+                        properties: {
+                            title: {
+                                type: Type.STRING,
+                                description: "A short name for the practice exercise.",
+                            },
+                            description: {
+                                type: Type.STRING,
+                                description: "Detailed guidance on how to perform the exercise.",
+                            },
+                            time_minutes: {
+                                type: Type.NUMBER,
+                                description: "Recommended duration in minutes for this exercise.",
+                            },
+                        },
+                    },
+                },
+                recommended_songs: {
+                    type: Type.ARRAY,
+                    description: "Songs that align with the user's current skill level and areas of improvement.",
+                    items: {
+                        type: Type.STRING,
+                    },
+                },
+            },
+        },
+    };
+    const model = 'gemini-2.5-flash';
+    const contents = [
+        {
+            role: 'system',
+            parts: [
+                {
+                    text: systemPrompt,
+                },
+            ],
+        },
+        {
+            role: 'user',
+            parts: [
+                {
+                    text: `INSERT_INPUT_HERE`,
+                },
+            ],
+        },
+    ];
+
+    return {
+        model,
+        config,
+        contents,
+    };
+}
+
+async function analyzeGuitarPlaying(input: string): Promise<string> {
+    const config = await createGeminiConfig(input);
+    return await executeGeminiConfig(config);
+}
+
+async function executeGeminiConfig(config: GeminiConfig): Promise<string> {
+    const ai = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY,
+    });
+
+    const response = await ai.models.generateContentStream({
+        model: config.model,
+        config: config.config,
+        contents: config.contents,
+    });
+
+    let responseText = '';
+    for await (const chunk of response) {
+        responseText += chunk.text;
+    }
+
+    return responseText;
+}
