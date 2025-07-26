@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import 'dotenv/config';
 import multer, { Multer, StorageEngine } from 'multer';
+import { analyzeGuitarPlaying } from './gemini';
 
 // Add error handling for unhandled errors
 process.on('uncaughtException', (error) => {
@@ -52,9 +53,7 @@ app.post('/analyze-guitar-playing', upload.single('video'), async (req: MulterRe
 
         console.log("Received video with size", videoFile?.size, "and practiceTime", practiceTime);
 
-        // TODO: Replace with your actual analysis logic
-        // const analysis = await analyzeGuitarPlaying(videoFile?.buffer);
-        const analysis = { message: 'Received in memory!', size: videoFile?.size, practiceTime };
+        const analysis = await analyzeGuitarPlaying(videoFile.buffer, practiceTime);
 
         console.log('Sending response:', analysis);
         res.json(analysis);

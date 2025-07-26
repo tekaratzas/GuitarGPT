@@ -1,7 +1,24 @@
 import {
     GoogleGenAI,
     Type,
+    createUserContent
 } from '@google/genai';
+import { GuitarAnalysisResponse } from '../src/shared/types';
+
+export async function analyzeGuitarPlaying(videoBuffer: Buffer, practiceTime: number): Promise<GuitarAnalysisResponse> {
+    // Convert video buffer to base64 for Gemini
+    const videoBase64 = videoBuffer.toString('base64');
+
+    // Create a more detailed prompt with practice time
+    const userPrompt = `
+I have a 5-second video of my guitar playing. I can practice for ${practiceTime} minutes per day.
+    `;
+
+    const config = await createGeminiConfig(userPrompt, videoBase64);
+
+    return await executeGeminiConfig(config);
+}
+
 
 
 const systemPrompt = `
@@ -22,11 +39,12 @@ type GeminiConfig = {
     contents: any;
 };
 
-async function createGeminiConfig(content: any): Promise<GeminiConfig> {
+async function createGeminiConfig(userPrompt: string, videoBase64: string): Promise<GeminiConfig> {
     const config = {
         thinkingConfig: {
             thinkingBudget: -1,
         },
+        systemInstruction: systemPrompt,
         responseMimeType: 'application/json',
         responseSchema: {
             type: Type.OBJECT,
@@ -79,21 +97,12 @@ async function createGeminiConfig(content: any): Promise<GeminiConfig> {
     const model = 'gemini-2.5-flash';
     const contents = [
         {
-            role: 'system',
-            parts: [
-                {
-                    text: systemPrompt,
-                },
-            ],
+            inlineData: {
+                mimeType: "video/mp4",
+                data: videoBase64,
+            },
         },
-        {
-            role: 'user',
-            parts: [
-                {
-                    text: `INSERT_INPUT_HERE`,
-                },
-            ],
-        },
+        { text: userPrompt }
     ];
 
     return {
@@ -103,12 +112,7 @@ async function createGeminiConfig(content: any): Promise<GeminiConfig> {
     };
 }
 
-async function analyzeGuitarPlaying(input: string): Promise<string> {
-    const config = await createGeminiConfig(input);
-    return await executeGeminiConfig(config);
-}
-
-async function executeGeminiConfig(config: GeminiConfig): Promise<string> {
+async function executeGeminiConfig(config: GeminiConfig): Promise<GuitarAnalysisResponse> {
     const ai = new GoogleGenAI({
         apiKey: process.env.GEMINI_API_KEY,
     });
@@ -124,5 +128,5 @@ async function executeGeminiConfig(config: GeminiConfig): Promise<string> {
         responseText += chunk.text;
     }
 
-    return responseText;
+    return JSON.parse(responseText) as GuitarAnalysisResponse;
 }

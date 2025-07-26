@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import './App.css'
-import { backendService } from './services/backend'
+import { Analysis } from './Analysis'
+import type { GuitarAnalysisResponse } from './shared/types'
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [practiceTime, setPracticeTime] = useState<number>(30)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState<string>('')
+  const [analysis, setAnalysis] = useState<GuitarAnalysisResponse | null>(null)
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null
@@ -23,22 +25,49 @@ function App() {
 
     setIsUploading(true)
     setUploadResult('')
+    setAnalysis(null)
 
     try {
       const formData = new FormData()
       formData.append('video', selectedFile)
       formData.append('practiceTime', practiceTime.toString())
 
-      const response = await backendService.analyzeGuitarPlaying(selectedFile, practiceTime)
+      const response = await fetch('/api/analyze-guitar-playing', {
+        method: 'POST',
+        body: formData,
+      })
 
-      console.log(response)
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
 
-      setUploadResult(`Success!`)
+      const result = await response.json()
+      setAnalysis(result)
     } catch (error) {
       setUploadResult(`Error: ${error instanceof Error ? error.message : 'Upload failed'}`)
     } finally {
       setIsUploading(false)
     }
+  }
+
+  const handleNewAnalysis = () => {
+    setAnalysis(null)
+    setSelectedFile(null)
+    setUploadResult('')
+  }
+
+  // Show analysis results if we have them
+  if (analysis) {
+    return (
+      <div className="app">
+        <Analysis analysis={analysis} />
+        <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+          <button onClick={handleNewAnalysis} className="new-analysis-btn">
+            🎸 Analyze Another Video
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -77,7 +106,7 @@ function App() {
         </div>
 
         <button type="submit" disabled={isUploading || !selectedFile}>
-          {isUploading ? 'Uploading...' : 'Analyze My Playing'}
+          {isUploading ? 'Analyzing...' : 'Analyze My Playing'}
         </button>
       </form>
 
