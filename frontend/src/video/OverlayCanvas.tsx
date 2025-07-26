@@ -1,4 +1,4 @@
-import { useRef, useImperativeHandle, forwardRef, useEffect } from 'react';
+import { useRef, useImperativeHandle, forwardRef, useEffect, useState } from 'react';
 import type { HighlightSegment } from '../../../shared/types';
 
 type OverlayCanvasProps = {
@@ -10,63 +10,28 @@ export type OverlayCanvasRef = {
 };
 
 const OverlayCanvas = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(({ highlightSegments }, ref) => {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
     const segmentsRef = useRef<HighlightSegment[]>(highlightSegments);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [currentSegment, setCurrentSegment] = useState<HighlightSegment | null>(null);
 
     // Keep the ref updated with the latest segments
     useEffect(() => {
         segmentsRef.current = highlightSegments;
     }, [highlightSegments]);
 
-    const updateCanvas = (currentTime: number) => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        // Convert currentTime from milliseconds to seconds
-        const currentTimeInSeconds = currentTime;
-
-        // Clear the canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Find the current highlight segment using the ref
-        const currentSegment = segmentsRef.current.find(
+    const updateCanvas = (currentTimeInSeconds: number) => {
+        setCurrentTime(currentTimeInSeconds);
+        
+        // Find the current highlight segment
+        const segment = segmentsRef.current.find(
             segment => {
                 const startSeconds = segment.start * 100;
                 const endSeconds = segment.end * 100;
                 return currentTimeInSeconds >= startSeconds && currentTimeInSeconds <= endSeconds;
             }
         );
-
-        // Add a semi-transparent background for better visibility
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-        ctx.fillRect(10, 10, 400, 80);
-
-        // Draw the current time (show in both minutes and seconds)
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 16px Arial';
-        ctx.fillText(`Time: ${currentTime.toFixed(3)}s`, 20, 30);
-
-        // Draw segment information if we're in a highlight segment
-        if (currentSegment) {
-            ctx.fillStyle = getSegmentColor(currentSegment.type);
-            ctx.font = 'bold 18px Arial';
-            ctx.fillText(`${currentSegment.type.toUpperCase()}: ${currentSegment.description}`, 20, 55);
-            
-            // Draw segment timing
-            ctx.fillStyle = 'yellow';
-            ctx.font = '14px Arial';
-            const startSeconds = currentSegment.start * 100;
-            const endSeconds = currentSegment.end * 100;
-            ctx.fillText(`${startSeconds.toFixed(1)}s - ${endSeconds.toFixed(1)}s`, 20, 75);
-        } else {
-            // No current segment
-            ctx.fillStyle = 'lightgray';
-            ctx.font = '16px Arial';
-            ctx.fillText('No highlight segment', 20, 55);
-        }
+        
+        setCurrentSegment(segment || null);
     };
 
     useImperativeHandle(ref, () => ({
@@ -76,34 +41,55 @@ const OverlayCanvas = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(({ highli
     const getSegmentColor = (type: HighlightSegment['type']): string => {
         switch (type) {
             case 'mistake':
-                return '#ff6b6b'; // Red
+                return '#ef4444';
             case 'highlight':
-                return '#4ecdc4'; // Teal
+                return '#06b6d4';
             case 'timing_issue':
-                return '#ffa726'; // Orange
+                return '#f97316';
             case 'string_noise':
-                return '#ab47bc'; // Purple
+                return '#a855f7';
             case 'clean_passage':
-                return '#66bb6a'; // Green
+                return '#10b981';
             default:
-                return '#42a5f5'; // Blue
+                return '#3b82f6';
         }
     };
 
+    if (!currentSegment) {
+        return (
+            <div className="absolute top-4 left-4 z-10 bg-black/80 backdrop-blur-sm rounded-lg p-3 border border-white/20 shadow-lg">
+                <div className="text-white text-sm font-medium">
+                    ⏱️ {currentTime.toFixed(1)}s
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <canvas
-            ref={canvasRef}
-            width="640"
-            height="360"
-            style={{ 
-                position: 'absolute', 
-                top: 0, 
-                left: 0, 
-                pointerEvents: 'none',
-                width: '100%',
-                height: '100%'
-            }}
-        />
+        <div 
+            className="absolute top-4 left-4 z-10 bg-black/90 backdrop-blur-sm rounded-lg p-3 border shadow-lg max-w-xs"
+            style={{ borderColor: getSegmentColor(currentSegment.type) }}
+        >
+            <div className="flex items-center gap-2 mb-2">
+                <div 
+                    className="px-2 py-1 rounded text-xs font-bold text-white"
+                    style={{ backgroundColor: getSegmentColor(currentSegment.type) }}
+                >
+                    {currentSegment.type.toUpperCase()}
+                </div>
+                <div className="text-white/70 text-xs">
+                    ⏱️ {currentTime.toFixed(1)}s
+                </div>
+            </div>
+            
+            <div className="text-white text-sm mb-2">
+                {currentSegment.description}
+            </div>
+            
+            <div className="text-yellow-400 text-xs font-medium">
+                🎯 {(currentSegment.start * 100).toFixed(1)}s - {(currentSegment.end * 100).toFixed(1)}s
+            </div>
+        </div>
     );
 });
 
