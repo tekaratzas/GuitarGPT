@@ -39,6 +39,31 @@ function App() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null
     setSelectedFile(file)
+    
+    // Check video duration if file is selected
+    if (file && file.type.startsWith('video/')) {
+      const video = document.createElement('video')
+      video.preload = 'metadata'
+      
+      video.onloadedmetadata = () => {
+        if (video.duration > 30) {
+          setUploadResult('Video must be 30 seconds or shorter. Please select a shorter video.')
+          setSelectedFile(null)
+          // Reset the file input
+          event.target.value = ''
+        } else {
+          setUploadResult('')
+        }
+      }
+      
+      video.onerror = () => {
+        setUploadResult('Unable to read video file. Please try another video.')
+        setSelectedFile(null)
+        event.target.value = ''
+      }
+      
+      video.src = URL.createObjectURL(file)
+    }
   }
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -159,7 +184,7 @@ function App() {
                     <div className="text-center">
                       <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">📹</div>
                       <div className="text-white font-medium mb-2">Click to upload your video</div>
-                      <div className="text-gray-400 text-sm">MP4, MOV, AVI up to 5 seconds</div>
+                      <div className="text-gray-400 text-sm">MP4, MOV, AVI up to 30 seconds</div>
                     </div>
                   </label>
                 </div>
