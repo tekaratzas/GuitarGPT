@@ -33,6 +33,8 @@ You will encourage them by accentuating their strengths, then give them specific
 When you give feedback, be sure to refer to points in the video. Timestamps are fine.
 
 You will also provide recommended songs to learn to help them improve. The goal is that these songs are slightly easier than what they are currently attempting.
+
+Any time you make a timestamp, make sure it is in seconds. ex: 3.5 is three and a half seconds.
 `;
 
 type GeminiConfig = {
