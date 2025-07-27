@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Analysis } from './Analysis'
 import type { GuitarAnalysisResponse } from './shared/types'
 
@@ -8,6 +8,33 @@ function App() {
   const [isUploading, setIsUploading] = useState(false)
   const [uploadResult, setUploadResult] = useState<string>('')
   const [analysis, setAnalysis] = useState<GuitarAnalysisResponse | null>(null)
+  const [loadingMessage, setLoadingMessage] = useState<string>('')
+
+  const loadingMessages = [
+    "🎵 Uploading your video...",
+    "🔍 Analyzing your technique...",
+    "🎸 Detecting chord progressions...",
+    "⏱️ Checking timing and rhythm...",
+    "🎼 Identifying finger positioning...",
+    "🎯 Finding areas for improvement...",
+    "✨ Generating personalized feedback...",
+    "📝 Creating practice recommendations...",
+    "🎪 Almost done, finalizing analysis..."
+  ]
+
+  useEffect(() => {
+    if (isUploading) {
+      let messageIndex = 0
+      const interval = setInterval(() => {
+        setLoadingMessage(loadingMessages[messageIndex])
+        messageIndex = (messageIndex + 1) % loadingMessages.length
+      }, 2000) // Change message every 2 seconds
+
+      return () => clearInterval(interval)
+    } else {
+      setLoadingMessage('')
+    }
+  }, [isUploading])
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null
@@ -204,6 +231,23 @@ function App() {
               </button>
             </form>
           </div>
+
+          {/* Loading Animation */}
+          {isUploading && (
+            <div className="mt-8 p-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl border border-cyan-400/30 backdrop-blur-xl">
+              <div className="text-center space-y-4">
+                <div className="flex justify-center">
+                  <div className="w-16 h-16 border-4 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin"></div>
+                </div>
+                <div className="text-cyan-300 font-medium text-lg animate-pulse">
+                  {loadingMessage}
+                </div>
+                <div className="text-gray-400 text-sm">
+                  This usually takes 30-60 seconds. Please don't close this page.
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Result Message */}
           {uploadResult && (
