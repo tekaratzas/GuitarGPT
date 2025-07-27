@@ -107,11 +107,11 @@ async function createGeminiConfig(userPrompt: string, videoBase64: string): Prom
                         properties: {
                             start: {
                                 type: Type.NUMBER,
-                                description: "Start time of the segment in seconds."
+                                description: "Start time of the segment in seconds. can be decimals. ex: 3.5 is three and a half seconds."
                             },
                             end: {
                                 type: Type.NUMBER,
-                                description: "End time of the segment in seconds."
+                                description: "End time of the segment in seconds. can be decimals. ex: 3.5 is three and a half seconds."
                             },
                             type: {
                                 type: Type.STRING,

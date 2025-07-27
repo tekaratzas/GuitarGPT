@@ -25,8 +25,8 @@ const OverlayCanvas = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(({ highli
         // Find the current highlight segment
         const segment = segmentsRef.current.find(
             segment => {
-                const startSeconds = segment.start * 100;
-                const endSeconds = segment.end * 100;
+                const startSeconds = segment.start;
+                const endSeconds = segment.end;
                 return currentTimeInSeconds >= startSeconds && currentTimeInSeconds <= endSeconds;
             }
         );
@@ -87,7 +87,7 @@ const OverlayCanvas = forwardRef<OverlayCanvasRef, OverlayCanvasProps>(({ highli
             </div>
             
             <div className="text-yellow-400 text-xs font-medium">
-                🎯 {(currentSegment.start * 100).toFixed(1)}s - {(currentSegment.end * 100).toFixed(1)}s
+                🎯 {currentSegment.start.toFixed(1)}s - {currentSegment.end.toFixed(1)}s
             </div>
         </div>
     );

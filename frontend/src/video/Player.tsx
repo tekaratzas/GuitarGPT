@@ -21,6 +21,7 @@ function VideoPlayer({ video, highlightSegments }: VideoPlayerProps) {
                 height="100%"
                 controls={true}
                 playing={false}
+                playbackRate={0.5}
                 onTimeUpdate={(progress) => {
                     // @ts-ignore
                     const currentTime = progress.target.currentTime;
