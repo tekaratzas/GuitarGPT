@@ -12,10 +12,10 @@ export type PracticeRoutine = {
 };
 
 export type GuitarAnalysisResponse = {
-  overall_feedback: string;
-  strong_points: string;
-  areas_to_improve: string;
-  practice_routine: PracticeRoutine[];
-  recommended_songs: string[];
-  highlight_segments: HighlightSegment[];
-};
+    overall_feedback: string;
+    strong_points: string;
+    areas_to_improve: string;
+    practice_routine: PracticeRoutine[];
+    recommended_songs: string[];
+    highlight_segments: HighlightSegment[];
+  };
