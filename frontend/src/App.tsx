@@ -43,7 +43,7 @@ function App() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-    
+
     if (!selectedFile) {
       setUploadResult('Please select a video file')
       return
@@ -89,15 +89,15 @@ function App() {
         {/* Animated background orbs */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{animationDelay: '1s'}}></div>
-          <div className="absolute bottom-20 left-1/2 w-80 h-80 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-20 left-1/2 w-80 h-80 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
-        
+
         <div className="relative z-10">
           <Analysis analysis={analysis} video={selectedFile!} />
           <div className="flex justify-center mt-12 mb-8">
-            <button 
-              onClick={handleNewAnalysis} 
+            <button
+              onClick={handleNewAnalysis}
               className="group relative px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 text-white font-semibold rounded-2xl shadow-2xl transform hover:scale-105 transition-all duration-300 hover:shadow-cyan-500/50 overflow-hidden"
             >
               <span className="relative z-10 flex items-center gap-3">
@@ -117,8 +117,8 @@ function App() {
       {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute bottom-20 left-1/2 w-80 h-80 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{animationDelay: '2s'}}></div>
+        <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-1/2 w-80 h-80 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
       </div>
 
       <div className="relative z-10 container mx-auto px-4 py-12">
@@ -152,8 +152,8 @@ function App() {
                     required
                     className="hidden"
                   />
-                  <label 
-                    htmlFor="video" 
+                  <label
+                    htmlFor="video"
                     className="group cursor-pointer block w-full p-8 border-2 border-dashed border-cyan-400/50 rounded-2xl bg-gradient-to-r from-cyan-500/10 to-blue-500/10 hover:from-cyan-500/20 hover:to-blue-500/20 transition-all duration-300 hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/25"
                   >
                     <div className="text-center">
@@ -172,7 +172,7 @@ function App() {
                         <div className="text-gray-300 text-sm">{(selectedFile.size / 1024 / 1024).toFixed(2)} MB</div>
                       </div>
                       <div className="flex-grow"></div>
-                      <button 
+                      <button
                         onClick={() => setSelectedFile(null)}
                         className="text-gray-400 hover:text-white transition-colors"
                       >
@@ -207,55 +207,45 @@ function App() {
               </div>
 
               {/* Submit Button */}
-              <button 
-                type="submit" 
-                disabled={isUploading || !selectedFile}
-                className="group w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-2xl shadow-2xl transform hover:scale-105 disabled:scale-100 transition-all duration-300 hover:shadow-cyan-500/50 disabled:cursor-not-allowed overflow-hidden relative"
-              >
-                <span className="relative z-10 flex items-center justify-center gap-3">
-                  {isUploading ? (
-                    <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Analyzing...</span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-xl">🔍</span>
-                      <span>Analyze My Playing</span>
-                    </>
+              {isUploading ? (
+                <div className="mt-8 p-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl border border-cyan-400/30 backdrop-blur-xl">
+                  <div className="text-center space-y-4">
+                    <div className="flex justify-center">
+                      <div className="w-16 h-16 border-4 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin"></div>
+                    </div>
+                    <div className="text-cyan-300 font-medium text-lg animate-pulse">
+                      {loadingMessage}
+                    </div>
+                    <div className="text-gray-400 text-sm">
+                      This usually takes 30-60 seconds. Please don't close this page.
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isUploading || !selectedFile}
+                  className="group w-full py-4 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-400 hover:to-blue-400 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold rounded-2xl shadow-2xl transform hover:scale-105 disabled:scale-100 transition-all duration-300 hover:shadow-cyan-500/50 disabled:cursor-not-allowed overflow-hidden relative"
+                >
+                  <span className="relative z-10 flex items-center justify-center gap-3">
+                    <span className="text-xl">🔍</span>
+                    <span>Analyze My Playing</span>
+                  </span>
+                  {!isUploading && (
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                   )}
-                </span>
-                {!isUploading && (
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                )}
-              </button>
+                </button>
+              )}
+
             </form>
           </div>
 
-          {/* Loading Animation */}
-          {isUploading && (
-            <div className="mt-8 p-6 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-2xl border border-cyan-400/30 backdrop-blur-xl">
-              <div className="text-center space-y-4">
-                <div className="flex justify-center">
-                  <div className="w-16 h-16 border-4 border-cyan-400/30 border-t-cyan-400 rounded-full animate-spin"></div>
-                </div>
-                <div className="text-cyan-300 font-medium text-lg animate-pulse">
-                  {loadingMessage}
-                </div>
-                <div className="text-gray-400 text-sm">
-                  This usually takes 30-60 seconds. Please don't close this page.
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Result Message */}
           {uploadResult && (
-            <div className={`mt-6 p-4 rounded-2xl backdrop-blur-xl border ${
-              uploadResult.includes('Error') 
-                ? 'bg-red-500/20 border-red-400/30 text-red-200' 
-                : 'bg-green-500/20 border-green-400/30 text-green-200'
-            }`}>
+            <div className={`mt-6 p-4 rounded-2xl backdrop-blur-xl border ${uploadResult.includes('Error')
+              ? 'bg-red-500/20 border-red-400/30 text-red-200'
+              : 'bg-green-500/20 border-green-400/30 text-green-200'
+              }`}>
               <div className="flex items-center gap-3">
                 <span className="text-xl">
                   {uploadResult.includes('Error') ? '❌' : '✅'}
@@ -267,9 +257,9 @@ function App() {
         </div>
 
         {/* Floating Elements */}
-        <div className="absolute top-1/4 left-10 text-cyan-400/30 text-6xl animate-bounce" style={{animationDelay: '0.5s'}}>🎵</div>
-        <div className="absolute top-1/3 right-16 text-purple-400/30 text-4xl animate-bounce" style={{animationDelay: '1.5s'}}>🎼</div>
-        <div className="absolute bottom-1/4 left-20 text-blue-400/30 text-5xl animate-bounce" style={{animationDelay: '2.5s'}}>🎸</div>
+        <div className="absolute top-1/4 left-10 text-cyan-400/30 text-6xl animate-bounce" style={{ animationDelay: '0.5s' }}>🎵</div>
+        <div className="absolute top-1/3 right-16 text-purple-400/30 text-4xl animate-bounce" style={{ animationDelay: '1.5s' }}>🎼</div>
+        <div className="absolute bottom-1/4 left-20 text-blue-400/30 text-5xl animate-bounce" style={{ animationDelay: '2.5s' }}>🎸</div>
       </div>
     </div>
   )
