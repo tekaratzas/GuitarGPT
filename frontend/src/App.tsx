@@ -141,7 +141,7 @@ function App() {
               {/* File Upload Section */}
               <div className="space-y-4">
                 <label className="block text-lg font-semibold text-white mb-4">
-                  Select your practice video (max 5 seconds)
+                  Select your practice video (max 30 seconds)
                 </label>
                 <div className="relative">
                   <input
