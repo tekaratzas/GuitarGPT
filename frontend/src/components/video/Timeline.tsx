@@ -1,4 +1,4 @@
-import type { HighlightSegment } from '../../../shared/types';
+import type { HighlightSegment } from '../../shared/types';
 
 type TimelineProps = {
     duration: number;
