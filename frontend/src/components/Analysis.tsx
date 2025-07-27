@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import type { GuitarAnalysisResponse } from './shared/types';
+import type { GuitarAnalysisResponse } from '../shared/types';
 import VideoPlayer from './video/Player';
+import AnimatedOrbs from './AnimatedOrbs';
+import FloatingIcons from './FloatingIcons';
 
 interface AnalysisProps {
     analysis: GuitarAnalysisResponse;
@@ -28,12 +30,7 @@ export function Analysis({ analysis, video }: AnalysisProps) {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-            {/* Animated background orbs */}
-            <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
-                <div className="absolute top-40 right-20 w-96 h-96 bg-gradient-to-r from-pink-400 to-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
-                <div className="absolute bottom-20 left-1/2 w-80 h-80 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse" style={{ animationDelay: '2s' }}></div>
-            </div>
+            <AnimatedOrbs />
 
             <div className="relative z-10 container mx-auto px-4 py-12">
                 {/* Hero Header */}
@@ -171,10 +168,7 @@ export function Analysis({ analysis, video }: AnalysisProps) {
                 </div>
 
                 {/* Floating Elements */}
-                <div className="absolute top-1/4 left-10 text-cyan-400/30 text-6xl animate-bounce" style={{ animationDelay: '0.5s' }}>🎵</div>
-                <div className="absolute top-1/3 right-16 text-purple-400/30 text-4xl animate-bounce" style={{ animationDelay: '1.5s' }}>🎼</div>
-                <div className="absolute bottom-1/4 left-20 text-blue-400/30 text-5xl animate-bounce" style={{ animationDelay: '2.5s' }}>🎸</div>
-                <div className="absolute top-1/2 right-10 text-yellow-400/30 text-3xl animate-bounce" style={{ animationDelay: '3.5s' }}>🎤</div>
+                <FloatingIcons showMic />
             </div>
         </div>
     );

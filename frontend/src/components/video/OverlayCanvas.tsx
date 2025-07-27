@@ -1,5 +1,5 @@
 import { useRef, useImperativeHandle, forwardRef, useEffect, useState } from 'react';
-import type { HighlightSegment } from '../../../shared/types';
+import type { HighlightSegment } from '../../shared/types';
 
 type OverlayCanvasProps = {
     highlightSegments: HighlightSegment[];

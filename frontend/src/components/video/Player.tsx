@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import ReactPlayer from 'react-player';
-import type { HighlightSegment } from '../../../shared/types';
+import type { HighlightSegment } from '../../shared/types';
 import OverlayCanvas, { type OverlayCanvasRef } from './OverlayCanvas';
 import Timeline from './Timeline';
 
