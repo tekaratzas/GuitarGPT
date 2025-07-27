@@ -24,7 +24,7 @@ function VideoPlayer({ video, highlightSegments }: VideoPlayerProps) {
     };
 
     return (
-        <div>
+        <div className="w-full h-full">
             {/* Timeline above video */}
             <div className="mb-4">
                 <Timeline
@@ -36,11 +36,12 @@ function VideoPlayer({ video, highlightSegments }: VideoPlayerProps) {
             </div>
 
             <div className="w-full h-full relative">
+                <div className="max-h-[700px]">
                 <ReactPlayer
                     ref={playerRef}
                     src={videoUrl}
                     width="100%"
-                    height="100%"
+                    height="500px"
                     controls={true}
                     playing={false}
                     onDurationChange={(event: any) => {
@@ -55,6 +56,7 @@ function VideoPlayer({ video, highlightSegments }: VideoPlayerProps) {
                         overlayRef.current?.updateCanvas(currentTimeInSeconds);
                     }}
                 />
+                </div>
 
                 <OverlayCanvas 
                     ref={overlayRef}

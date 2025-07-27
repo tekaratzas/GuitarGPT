@@ -11,7 +11,7 @@ export async function analyzeGuitarPlaying(videoBuffer: Buffer, practiceTime: nu
 
     // Create a more detailed prompt with practice time
     const userPrompt = `
-I have a 5-second video of my guitar playing. I can practice for ${practiceTime} minutes per day.
+I have a max 30-second video of my guitar playing. I can practice for ${practiceTime} minutes per day.
     `;
 
     const config = await createGeminiConfig(userPrompt, videoBase64);
@@ -29,6 +29,8 @@ You will be given a short video of a guitar player attempting a piece they find 
 Your job is to analyze the video and provide a detailed analysis of the player's playing.
 
 You will encourage them by accentuating their strengths, then give them specific areas to improve on.
+
+When you give feedback, be sure to refer to points in the video. Timestamps are fine.
 
 You will also provide recommended songs to learn to help them improve. The goal is that these songs are slightly easier than what they are currently attempting.
 `;
