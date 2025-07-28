@@ -19,6 +19,88 @@ This project provides a clean interface to upload playing via video and sends it
 - **AI**: Google Gemini 2.5 Flash
 - **Video Processing**: Custom video analysis pipeline
 
+## Architecture
+
+```mermaid
+graph TB
+    subgraph "Frontend (React + TypeScript)"
+        A[User Interface] --> B[Video Upload Component]
+        B --> C[File Validation]
+        C --> D[Form Submission]
+        D --> E[Loading States]
+        E --> F[Analysis Display]
+    end
+
+    subgraph "Backend (Node.js + TypeScript)"
+        G[Express Server] --> H[Video Processing]
+        H --> I[Gemini Integration]
+        I --> J[Analysis Generation]
+        J --> K[Response Formatting]
+    end
+
+    subgraph "External Services"
+        L[Google Gemini 2.5 Flash API]
+        M[File System Storage]
+    end
+
+    subgraph "Data Flow"
+        N[Video File] --> O[FormData]
+        O --> P[Multipart Upload]
+        P --> Q[Video Validation]
+        Q --> R[Frame Extraction]
+        R --> S[AI Analysis Request]
+        S --> T[Structured Response]
+        T --> U[JSON Response]
+        U --> V[UI Rendering]
+    end
+
+    %% Connections
+    D --> G
+    K --> U
+    H --> L
+    H --> M
+    R --> S
+    S --> L
+    L --> T
+
+    %% Styling
+    classDef frontend fill:#61dafb,stroke:#333,stroke-width:2px,color:#000
+    classDef backend fill:#68a063,stroke:#333,stroke-width:2px,color:#fff
+    classDef external fill:#ff6b6b,stroke:#333,stroke-width:2px,color:#fff
+    classDef data fill:#feca57,stroke:#333,stroke-width:2px,color:#000
+
+    class A,B,C,D,E,F frontend
+    class G,H,I,J,K backend
+    class L,M external
+    class N,O,P,Q,R,S,T,U,V data
+```
+
+### System Components
+
+#### Frontend Layer
+- **React Application**: Modern UI built with TypeScript and Tailwind CSS
+- **Video Upload**: Drag-and-drop interface with file validation
+- **Real-time Feedback**: Loading states and progress indicators
+- **Analysis Display**: Interactive results with practice recommendations
+
+#### Backend Layer
+- **Express Server**: RESTful API endpoints for video processing
+- **Video Processing Pipeline**: Frame extraction and analysis preparation
+- **Gemini Integration**: AI-powered guitar playing analysis
+- **Response Handling**: Structured data formatting and error management
+
+#### External Services
+- **Google Gemini 2.5 Flash**: Advanced AI model for guitar technique analysis
+- **File System**: Temporary video storage during processing
+
+#### Data Flow
+1. **Upload**: User selects video file (max 30 seconds)
+2. **Validation**: Client-side duration and format checks
+3. **Processing**: Server extracts video frames and prepares for AI analysis
+4. **Analysis**: Gemini AI analyzes playing technique and provides feedback
+5. **Response**: Structured analysis results returned to frontend
+6. **Display**: Interactive results shown to user with practice recommendations
+
 ## Prerequisites
 
 - Node.js (v18 or higher)
